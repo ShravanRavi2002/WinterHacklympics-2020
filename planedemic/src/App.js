@@ -12,15 +12,12 @@ function App() {
   const [routes, setRoutes] = useState([]);
   const FindPath = async (data) => {
     // run backend processes on start and dest airports
-    const path = await sendData(data)
-    console.log(path)
-    var augPath = " " + path
-    parsePath(augPath)
+    const paths = await sendData(data)
+    console.log(paths)
+    setRoutes(paths)
   }
-  const parsePath = (path) =>{
-    setRoutes(path.split('],'))
-    
-  }
+
+
   // const getOtherPaths = () =>{
   //   for(var i = 0; i < routes.length - 1; i++) 
   //     <Route route={routes[i]}/>
@@ -55,35 +52,10 @@ function App() {
         </form>
       </div>
       <br/>
-      <br/>
-        <div>
-            <div>
-              Color Key:
-            </div>
-            <div>
-              Green: Low Covid Risk / Best Route
-            </div>
-            <div>
-              Yellow: Moderate Covid Risk
-            </div>
-            <div>
-              Orange: High Covid Risk
-            </div>
-            <div>
-              Red: Extreme Covid Risk
-            </div>
-            <br/>
-            
-        </div>
-        {
-          routes
-          .filter(route =>route.length > 6)
-          .map(routes => {
-            return(
-              <Route route={routes}/>
-            );
-          })
-        }
+
+      <div>
+          {routes.map(route => <Route route={route} />)}
+      </div>
     </div>
   );
 }
