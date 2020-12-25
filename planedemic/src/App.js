@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import './App.css';
 import { sendData } from './API';
 import Route from './components/route'
-import BestRoute from './components/bestRoute'
+
 
 
 
@@ -46,9 +46,9 @@ function App() {
       <br/>
       <div>
         <form onSubmit={handleSubmit(FindPath)}>
-          <input name="start" placeholder="Start" ref={register} />
-          <input name="dest" placeholder="Destination" ref={register} />
-          <input type="submit" />
+            <input  name="start" placeholder="Start Airport" ref={register} />
+            <input name="dest" placeholder="Destination Airport" ref={register} />
+            <input type="submit"/>
         </form>
       </div>
       <br/>

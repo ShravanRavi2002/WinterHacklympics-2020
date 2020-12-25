@@ -87,7 +87,7 @@ class Graph:
                 connection = self.vertices[connection_name]
                 cost = cur_vertex.cost_from_start + connection.cases
                 if connection.scratch != -1:
-                    if len(connection.paths) <= 5 and connection.prev != cur_vertex.code:
+                    if len(connection.paths) <= 5:
                         connection.cost_from_start = cost
                         connection.prev = cur_vertex.code
                         connection.paths.append(self.get_path(connection.code))
