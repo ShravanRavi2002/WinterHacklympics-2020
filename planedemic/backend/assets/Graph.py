@@ -32,8 +32,7 @@ class Vertex:
 def auth_firebase():
     # data_folder = Path("")
     # TODO: make this into relative path
-    cred = credentials.Certificate(
-        "/Users/shravanravi/Hackathons/WinterHacklympics-2020/service_account_credentials.json")
+    cred = credentials.Certificate("/Users/shravanravi/Hackathons/WinterHacklympics-2020/service_account_credentials.json")
     firebase_admin.initialize_app(cred)
     return firestore.client()
 
@@ -68,9 +67,11 @@ class Graph:
             cur_vertex = self.vertices[vertex]
             cur_vertex.cost_from_start = float("inf")
             cur_vertex.scratch = 0
+            cur_vertex.prev = None
 
-    def create_graph(self, start_vertex):
-        # dijkstra's algorithm
+
+
+    def find_other_paths(self, start_vertex):
         self.clear_all()
         if (start_vertex is None):
             print("Invalid start vertex.")
@@ -86,38 +87,30 @@ class Graph:
                 connection = self.vertices[connection_name]
                 cost = cur_vertex.cost_from_start + connection.cases
                 if connection.scratch != -1:
-                    if connection.best_cost_from_start > cost:
-                        connection.best_cost_from_start = cost
-                        connection.best_prev = cur_vertex.code
-                        connection.best_path = self.get_path(connection.code, True)
-                        flight_paths.put(connection)
-                    if connection.cost_from_start == float('inf'):
+                    if len(connection.paths) <= 5 and connection.prev != cur_vertex.code:
                         connection.cost_from_start = cost
                         connection.prev = cur_vertex.code
-                    elif len(connection.paths) < 5 and connection.prev != cur_vertex.code:
-                        connection.cost_from_start = cost
-                        connection.prev = cur_vertex.code
-                        connection.paths.append(self.get_path(connection.code, False))
+                        connection.paths.append(self.get_path(connection.code))
                         flight_paths.put(connection)
 
 
-    def get_path(self, dest, best):
+    def get_path(self, dest):
         path = []
         cur_vertex = self.vertices[dest]
         while cur_vertex != self.start:
             path.append(cur_vertex.code)
-            cur_vertex = self.vertices.get(cur_vertex.best_prev) if best else self.vertices.get(cur_vertex.prev)
+            cur_vertex = self.vertices.get(cur_vertex.prev)
         path.append(self.start.code)
         path.reverse()
-        cost = self.vertices[dest].best_cost_from_start if best else self.vertices[dest].cost_from_start
+        cost = self.vertices[dest].cost_from_start
         path.append(cost)
         return path
 
+
     def get_all_paths(self, dest):
-        self.vertices[dest].paths.append(self.vertices[dest].best_path)
         return self.vertices[dest].paths
 
     def __init__(self, start):
         firestore_db = auth_firebase()
         self.vertices = generate_vertices(firestore_db)
-        self.create_graph(self.vertices[start])
+        self.find_other_paths(self.vertices[start])

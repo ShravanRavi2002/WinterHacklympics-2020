@@ -13,6 +13,7 @@ function App() {
   const FindPath = async (data) => {
     // run backend processes on start and dest airports
     const path = await sendData(data)
+    console.log(path)
     var augPath = " " + path
     parsePath(augPath)
   }

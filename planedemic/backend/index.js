@@ -15,14 +15,16 @@ app.post('/', async(req,res) => {
     var dataToSend
     const runScript = spawn('python3', ['assets/GraphGenerator.py', request.body.start, request.body.dest]);
     runScript.stdout.on('data',  (data) => {
-        console.log(data.toString());
-        dataToSend = data.toString()
+        console.log(typeof(data))
+       // console.log(JSON.parse(data)[0]);
+        dataToSend = data
     });
     runScript.stderr.on('data', (data) => {
         console.error("U DONE GOOFED")
     });
-    runScript.on('close', (code) =>{
-        res.send(dataToSend)
+    runScript.on('close', (code) => {
+        const dataArray = JSON.parse(dataToSend)
+        res.json(dataArray)
     });
 });
 
